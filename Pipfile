@@ -1,0 +1,32 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+django-environ = "*"
+django-extensions = "*"
+djangorestframework = "*"
+drf-yasg = "*"
+dj-static = "*"
+"psycopg2-binary" = "*"
+requests = "*"
+gunicorn = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-mock = "*"
+pytest-cov = "*"
+raven = "*"
+pytest-factoryboy = "*"
+requests-mock = "*"
+jinjasql = "*"
+
+[dev-packages]
+"flake8" = "*"
+isort = "*"
+docker-compose = "*"
+locustio = "*"
+pygraphviz = "*"
+pydotplus = "*"
+pylint = "*"
