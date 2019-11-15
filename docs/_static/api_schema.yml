@@ -1,0 +1,324 @@
+openapi: 3.0.1
+info:
+  title: Trood BI Reporting API
+  contact:
+    email: info@trood.ru
+  license:
+    name: Private License
+  version: v1
+servers:
+- url: http://0.0.0.0:8000/v1
+security:
+- Token: []
+paths:
+  /connections/:
+    get:
+      tags:
+      - connections
+      description: Return source list.
+      operationId: connections_list
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+    post:
+      tags:
+      - connections
+      description: Return created source.
+      operationId: connections_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Source'
+        required: true
+      responses:
+        201:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+      x-codegen-request-body-name: data
+  /connections/{code}/:
+    get:
+      tags:
+      - connections
+      description: Return the given source.
+      operationId: connections_read
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+    delete:
+      tags:
+      - connections
+      description: Delete the given source.
+      operationId: connections_delete
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: ""
+          content: {}
+    patch:
+      tags:
+      - connections
+      description: Update the given source.
+      operationId: connections_partial_update
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Source'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+      x-codegen-request-body-name: data
+  /connections/{code}/report/:
+    post:
+      tags:
+      - connections
+      description: Return the given report from source by given config.
+      operationId: connections_report
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnFlyReport'
+        required: true
+      responses:
+        201:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnFlyReport'
+      x-codegen-request-body-name: data
+  /reports/:
+    get:
+      tags:
+      - reports
+      description: Return report list.
+      operationId: reports_list
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportList'
+    post:
+      tags:
+      - reports
+      description: Return created report config.
+      operationId: reports_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportList'
+        required: true
+      responses:
+        201:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportList'
+      x-codegen-request-body-name: data
+  /reports/{code}/:
+    get:
+      tags:
+      - reports
+      description: Return the given report with data.
+      operationId: reports_read
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+    delete:
+      tags:
+      - reports
+      description: Delete the given report.
+      operationId: reports_delete
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: ""
+          content: {}
+    patch:
+      tags:
+      - reports
+      description: Update the given report.
+      operationId: reports_partial_update
+      parameters:
+      - name: code
+        in: path
+        description: Code
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportList'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportList'
+      x-codegen-request-body-name: data
+components:
+  schemas:
+    Source:
+      required:
+      - dsn
+      - type
+      type: object
+      properties:
+        code:
+          title: Code
+          maxLength: 128
+          minLength: 1
+          type: string
+          description: Code
+        title:
+          title: Title
+          maxLength: 128
+          type: string
+          description: Title
+          nullable: true
+        type:
+          title: Type
+          type: string
+          description: Druid not implemented!!!
+          enum:
+          - PSQL
+          - DRUID
+        dsn:
+          title: Dsn
+          maxLength: 1024
+          minLength: 1
+          type: string
+          description: Source connection string
+    OnFlyReport:
+      required:
+      - query
+      type: object
+      properties:
+        data:
+          title: Data
+          type: string
+          description: Data from source. JSON.
+          readOnly: true
+        query:
+          title: Query
+          minLength: 1
+          type: string
+          description: Report query.
+        query_params:
+          title: Query params
+          type: object
+          properties: {}
+          description: Query filter parameters.
+    ReportList:
+      required:
+      - query
+      - source
+      type: object
+      properties:
+        source:
+          title: Source
+          type: string
+        code:
+          title: Code
+          maxLength: 128
+          minLength: 1
+          type: string
+          description: Code
+        query:
+          title: Query
+          minLength: 1
+          type: string
+          description: Query string
+    Report:
+      type: object
+      properties:
+        code:
+          title: Code
+          maxLength: 128
+          minLength: 1
+          type: string
+          description: Code
+        data:
+          title: Data
+          type: string
+          description: Data from source. JSON.
+          readOnly: true
+  securitySchemes:
+    Token:
+      type: apiKey
+      name: Authorization
+      in: header

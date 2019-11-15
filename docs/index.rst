@@ -3,9 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to trood-reporting documentation!
-========================================
-
+Reporting service
+=================
 
 
 Contents
@@ -13,11 +12,18 @@ Contents
 
 .. toctree::
     get-started
+    settings
     rest-api
 
-Indices and tables
-==================
+Requirements
+------------
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+* Python 3.6
+* PostgreSQL
+
+Contributing
+------------
+
+* Use Pull Requests!
+* Always keep clean diffs.
+* Use [http://editorconfig.org/](EditorConfig) and plugin for your IDE.

@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = u'trood-reporting'
+project = u'Trood Reporting'
 copyright = u'2019, Trood CIS'
 author = u'Trood CIS'
 
@@ -40,6 +40,7 @@ release = u'0.1.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinxcontrib.openapi',
     # 'sphinx.ext.inheritance_diagram',
 ]
 
@@ -132,7 +133,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'trood-reporting.tex', u'trood-reporting Documentation',
+    (master_doc, 'trood-reporting.tex', u'Trood Reporting Documentation',
      u'Trood CIS', 'manual'),
 ]
 
@@ -142,7 +143,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'trood-reporting', u'trood-reporting Documentation',
+    (master_doc, 'trood-reporting', u'Trood Reporting Documentation',
      [author], 1)
 ]
 
@@ -153,9 +154,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'trood-reporting', u'trood-reporting Documentation',
-     author, 'trood-reporting', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, 'trood-reporting', u'Trood Reporting Documentation',
+     author, 'trood-reporting', 'Miscellaneous'),
 ]
 
 
