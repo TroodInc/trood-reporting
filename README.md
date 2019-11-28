@@ -45,6 +45,3 @@ docker-compose up --build
 * Always keep clean diffs.
 * Use [http://editorconfig.org/](EditorConfig) and plugin for your IDE.
 
-## License
-
-Private
