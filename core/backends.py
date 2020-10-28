@@ -20,7 +20,7 @@ class TroodAuth(RemoteUserBackend):
         return token
 
     def verify_token(self, headers):
-        response = requests.post(f'{settings.AUTH_URL}/verify-token', headers=headers)
+        response = requests.post(f'{settings.AUTH_URL}/verify-token/', headers=headers)
         if response.status_code != 200:
             return None
         return response.json()['data']
@@ -30,7 +30,7 @@ class TroodAuth(RemoteUserBackend):
             'login': data.get('username'),
             'password': data.get('password')
         }
-        response = requests.post(f'{settings.AUTH_URL}/login', json=login_data)
+        response = requests.post(f'{settings.AUTH_URL}/login/', json=login_data)
         if response.status_code != 200:
             return None
         return response.json()['data']
