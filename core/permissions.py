@@ -10,7 +10,7 @@ class TroodAuth(IsAuthenticated):
         if is_test_token:
             return True
 
-        url = f'{settings.AUTH_URL}/verify-token/'
+        url = f'{settings.AUTH_URL}api/v1.0/verify-token/'
         headers = {'Authorization': self.get_token(request)}
         response = requests.post(url, headers=headers)
         if response.status_code != 200:
