@@ -1,3 +1,8 @@
 .idea
 
 docs/_build
+
+/postgres/
+
+*pyc
+.DS_Store
