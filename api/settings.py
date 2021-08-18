@@ -1,3 +1,6 @@
+import os
+
+import dj_database_url
 import environ
 
 # Django environ
@@ -51,9 +54,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'core.middlewares.TroodAuth',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -80,8 +81,11 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 USE_X_FORWARDED_HOST = True
 
-DATABASES = {'default': env.db()}
-DATABASES['default']['CONN_MAX_AGE'] = 500
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='pgsql://reporting:reporting@reporting_postgres/reporting')
+}
 
 LANGUAGE_CODE = 'en-us'
 
@@ -96,7 +100,6 @@ USE_TZ = False
 STATIC_ROOT = root('static')
 STATIC_URL = '/reporting/static/'
 
-# STATICFILES_DIRS = (root('static'),)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = root('media')
@@ -106,10 +109,14 @@ AUTHENTICATION_BACKENDS = ['core.backends.TroodAuth']
 AUTH_URL = env('AUTH_URL')
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('core.permissions.TroodAuth', ),
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
-    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.OrderingFilter',
+        'rest_framework.filters.SearchFilter',
+        'trood.contrib.django.filters.TroodRQLFilterBackend',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'trood.contrib.django.pagination.TroodRQLPagination',
 }
+
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -121,9 +128,37 @@ SWAGGER_SETTINGS = {
     }
 }
 
-# Sentry
-if env('SENTRY_ENABLED'):
-    RAVEN_CONFIG = {
-        'dsn': env('SENTRY_DSN'),
-        'release': env('SENTRY_ENV'),
+AUTH_TYPE = os.environ.get('AUTHENTICATION_TYPE')
+
+if AUTH_TYPE == 'NONE':
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = ()
+    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = ()
+elif AUTH_TYPE == 'TROOD':
+    TROOD_AUTH_SERVICE_URL = os.environ.get(
+      'TROOD_AUTH_SERVICE_URL', 'http://authorization.trood:8000/'
+    )
+    AUTH_URL = TROOD_AUTH_SERVICE_URL
+    TROOD_ABAC = {
+        'RULES_SOURCE': os.environ.get("ABAC_RULES_SOURCE", "URL"),
+        'RULES_PATH': os.environ.get("ABAC_RULES_PATH", "{}api/v1.0/abac/".format(TROOD_AUTH_SERVICE_URL))
     }
+    SERVICE_DOMAIN = os.environ.get("SERVICE_DOMAIN", "REPORTING")
+    SERVICE_AUTH_SECRET = os.environ.get("SERVICE_AUTH_SECRET")
+
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = (
+        'trood.contrib.django.auth.authentication.TroodTokenAuthentication',
+    )
+
+    MIDDLEWARE += [
+        'trood.contrib.django.auth.middleware.TroodABACMiddleware',
+        'core.middlewares.TroodAuth',
+    ]
+
+    REST_FRAMEWORK['DEFAULT_PERMISSION_CLASSES'] = (
+        'trood.contrib.django.auth.permissions.TroodABACPermission',
+        'core.permissions.TroodAuth',
+    )
+
+    REST_FRAMEWORK['DEFAULT_FILTER_BACKENDS'] += (
+        'trood.contrib.django.auth.filter.TroodABACFilterBackend',
+    )

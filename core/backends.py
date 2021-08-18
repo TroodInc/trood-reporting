@@ -20,7 +20,7 @@ class TroodAuth(RemoteUserBackend):
         return token
 
     def verify_token(self, headers):
-        response = requests.post(f'{settings.AUTH_URL}/verify-token/', headers=headers)
+        response = requests.post(f'{settings.AUTH_URL}api/v1.0/verify-token/', headers=headers)
         if response.status_code != 200:
             return None
         return response.json()['data']
@@ -30,22 +30,22 @@ class TroodAuth(RemoteUserBackend):
             'login': data.get('username'),
             'password': data.get('password')
         }
-        response = requests.post(f'{settings.AUTH_URL}/login/', json=login_data)
+        response = requests.post(f'{settings.AUTH_URL}api/v1.0/login/', json=login_data)
         if response.status_code != 200:
             return None
         return response.json()['data']
 
     def get_user(self, username):
-        user, _ = UserModel._default_manager.get_or_create(**{
-            UserModel.USERNAME_FIELD: username
-        })
-        # XXX: Find better way
-        if not user.is_superuser:
-            user.is_superuser = True
-            user.is_staff = True
-            user.save()
+        if not isinstance(username, int):
+            user, created = UserModel._default_manager.get_or_create(**{
+                UserModel.USERNAME_FIELD: username
+            })
+            if not user.is_superuser:
+                user.is_superuser = True
+                user.is_staff = True
+                user.save()
 
-        return user
+            return user
 
     def authenticate(self, request, remote_user=None):
         token = self.get_token(request)
@@ -57,5 +57,4 @@ class TroodAuth(RemoteUserBackend):
 
         if not user:
             return None
-
         return self.get_user(user['login'])

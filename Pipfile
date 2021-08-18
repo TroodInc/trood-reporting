@@ -21,6 +21,8 @@ raven = "*"
 pytest-factoryboy = "*"
 requests-mock = "*"
 jinjasql = "*"
+dj_database_url = "*"
+trood = "*"
 
 [dev-packages]
 "flake8" = "*"
