@@ -1,21 +1,20 @@
 version: '3'
 
 services:
-
   reporting:
     build:
       context: .
       dockerfile: Dockerfile
     env_file: .env
     restart: always
-    container_name: trood-reporting
+    container_name: reporting
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "8800:8000"
     networks:
-      - trood-network
+      - topline-environment_default
 
-networks:
-  trood-network:
-    driver: bridge
+networks: 
+  topline-environment_default:
+    external: true

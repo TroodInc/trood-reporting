@@ -4,13 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-django-environ = "*"
-django-extensions = "*"
-djangorestframework = "*"
+django = "==3.2.15"
+django-environ = "==0.9.0"
+django-extensions = "==3.2.0"
+djangorestframework = "==3.13.1"
 drf-yasg = "*"
 dj-static = "*"
-"psycopg2-binary" = "*"
+"psycopg2" = "*"
 requests = "*"
 gunicorn = "*"
 pytest = "*"
@@ -20,7 +20,10 @@ pytest-cov = "*"
 raven = "*"
 pytest-factoryboy = "*"
 requests-mock = "*"
-jinjasql = "*"
+jinjasql = "==0.1.8"
+jinja2 = "==2.11.3"
+markupsafe = "==2.0.1"
+
 
 [dev-packages]
 "flake8" = "*"
